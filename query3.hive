@@ -1,0 +1,9 @@
+CREATE TEMPORARY TABLE usairs AS
+SELECT regexp_replace(iata, "\"", "") iata FROM airports WHERE regexp_replace(UPPER(country), "\"", "")="USA";
+
+SELECT COUNT(f.Month) c  FROM flights f
+JOIN usairs a ON (f.Origin=a.iata)
+JOIN usairs a2 ON (f.Dest=a2.iata)
+WHERE f.Month>0 AND f.Month<9
+GROUP BY a.iata
+ORDER BY c DESC LIMIT 5;

@@ -1,0 +1,14 @@
+ALTER TABLE flights CHANGE cancelled cancelled int;
+
+CREATE TEMPORARY TABLE failed_carriers AS
+SELECT UniqueCarrier, cancelled, regexp_replace(a.city, "\"", "") city FROM flights f
+JOIN airports a ON f.Origin=regexp_replace(a.iata, "\"", "")
+WHERE f.cancelled>0;
+
+CREATE TEMPORARY TABLE canceled_cities AS
+SELECT UniqueCarrier, COUNT(cancelled) c, COLLECT_LIST(city) cities FROM failed_carriers
+GROUP BY UniqueCarrier;
+
+SELECT UniqueCarrier, c, CONCAT_WS(",", cities) FROM canceled_cities
+WHERE c>0
+ORDER BY c DESC;

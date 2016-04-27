@@ -1,0 +1,3 @@
+SELECT c.description AS carrier, COUNT(f.UniqueCarrier) AS count FROM flights f
+JOIN carriers c ON f.UniqueCarrier=c.code
+GROUP BY(c.description);
